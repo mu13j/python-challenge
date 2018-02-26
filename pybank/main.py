@@ -1,8 +1,48 @@
 import string
-# First we'll import the os module 
-# This will allow us to create file paths across operating systems
 import os
-csvpath = os.path.join('Resources', 'WebDevelopment.csv')
+import csv
+csvpath = os.path.join('Resources', 'budget_data_1.csv')
+
+def getAnalysis(months,revenue):
+    
+    # Total months
+	totalmonths = len(revenue)
+
+    # Total Revenue
+	totalrevenue=sum(revenue)
+
+    # Average Change in revenue
+	changes=[]
+	for i in range(0,len(revenue)-1):
+		changes.append(revenue[i+1]-revenue[i])
+	averagechange=sum(changes)/len(changes)
+
+    # Greatest Increase in Revenue
+	greatestincrease=max(changes)
+	greatestincreasemonth=months[changes.index(greatestincrease)+1]
+	
+	# Greatest Decrease in Revenue
+	greatestdecrease=min(changes)
+	greatestdecreasemonth=months[changes.index(greatestdecrease)+1]
+    # Print out the analysis
+	print("Financial Analysis")
+	print("----------------------------")
+	print("Total Months: " + str(totalmonths))
+	print("Total Revenue: " + str(totalrevenue))
+	print("Average Revenue Change: " + '${:}'.format(str(averagechange)))
+	print("Greatest Increase in Revenue: " + str(greatestincreasemonth)+" " +str(greatestincrease))
+	print("Greatest Decrease in Revenue: " + str(greatestdecreasemonth)+" " + str(greatestdecrease))
+	text_file = open("Output.txt", "w")
+	text_file.write("Financial Analysis"+'\n')
+	text_file.write("---------------------------- \n")
+	text_file.write("Total Months: " + str(totalmonths)+'\n')
+	text_file.write("Total Revenue: " + str(totalrevenue)+'\n')
+	text_file.write("Average Revenue Change: " + '${:}'.format(str(averagechange))+'\n')
+	text_file.write("Greatest Increase in Revenue: " + str(greatestincreasemonth)+" " +'${:}'.format(str(greatestincrease))+'\n')
+	text_file.write("Greatest Decrease in Revenue: " + str(greatestdecreasemonth)+" " +'${:}'.format(str(greatestdecrease))+'\n')
+	text_file.close()
+
+
 
 
 # # Method 1: Plain Reading of CSVs
@@ -12,13 +52,8 @@ csvpath = os.path.join('Resources', 'WebDevelopment.csv')
 # print(type(lines))
 
 # Method 2: Improved Reading using CSV module
-title=[]
-price=[]
-sub=[]
-rev=[]
-leng=[]
-percentile=[]
-import csv
+months=[]
+revenue=[]
 with open(csvpath, newline='', encoding="utf8") as csvfile:
 
      #CSV reader specifies delimiter and variable that holds contents
@@ -27,26 +62,13 @@ with open(csvpath, newline='', encoding="utf8") as csvfile:
 	print(csvreader)
 
     #  Each row is read as a row
+	firstline = True
 	for row in csvreader:
-		title.append(row[1])
-		price.append(row[4])
-		sub.append(row[5])
-		rev.append(row[6])
-		a,b=row[9].split(" ")
-		leng.append(a)
-		percentile.append(int(row[6])/int(row[5]))
-	
-	zipped=zip(title, price, sub, rev, leng, percentile)
+		if firstline:    #skip first line
+			firstline = False
+			continue
+		months.append(row[0])
+		revenue.append(int(row[1]))
 
-output_path = os.path.join('output', 'nudemy.csv')
-print(output_path)
-# Open the file using "write" mode. Specify the variable to hold the contents
-with open(output_path, 'w', newline='') as csvfile:
+getAnalysis(months,revenue)
 
-    # Initialize csv.writer
-    csvwriter = csv.writer(csvfile, delimiter=',')
-
-    # Write the first row (column headers)
-    for i in zipped:
-	    csvwriter.writerow(i)
-    
