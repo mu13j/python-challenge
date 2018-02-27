@@ -1,24 +1,48 @@
 import string
-# First we'll import the os module 
-# This will allow us to create file paths across operating systems
 import os
-csvpath = os.path.join('Resources', 'WebDevelopment.csv')
-
-
-# # Method 1: Plain Reading of CSVs
-#with open(csvpath, 'r') as file_handler:
-# lines = file_handler.read()
-# print(lines)
-# print(type(lines))
-
-# Method 2: Improved Reading using CSV module
-title=[]
-price=[]
-sub=[]
-rev=[]
-leng=[]
-percentile=[]
 import csv
+csvpath = os.path.join('election_data_1.csv')
+
+def getAnalysis(candidates):
+    
+    # Total votes
+	totalvotes = len(candidates)
+
+    # Candidates Names
+	CandidateNames=[]
+	for i in candidates:
+		if i not in CandidateNames:
+			CandidateNames.append(i)
+
+    # Votes for each Candidates
+	votesbycandidate=[]
+	for i in CandidateNames:
+		counter=0
+		for j in candidates:
+			if i==j:
+				counter+=1
+		votesbycandidate.append(counter)
+	print("Election Results")
+	print("----------------------------")
+	print("Total Votes: " + str(totalvotes))
+	print("----------------------------")
+	for i in range(len(CandidateNames)):
+		print(str(CandidateNames[i]) + ": " + str("{0:.0f}%".format((votesbycandidate[i]/totalvotes*100)))+ " (" + str(votesbycandidate[i]) + ")")
+	print("----------------------------")
+	print("Winner: " + str(CandidateNames[votesbycandidate.index(max(votesbycandidate))]))
+
+	text_file = open("Output.txt", "w")
+	text_file.write("Election Results"+'\n')
+	text_file.write("---------------------------- \n")
+	text_file.write("Total Votes: " + str(totalvotes)+'\n')
+	text_file.write("---------------------------- \n")
+	for i in range(len(CandidateNames)):
+		text_file.write(str(CandidateNames[i]) + ": " + str("{0:.0f}%".format((votesbycandidate[i]/totalvotes*100)))+ " (" + str(votesbycandidate[i]) + ") \n")
+	text_file.write("---------------------------- \n")
+	text_file.write("Winner: " + str(CandidateNames[votesbycandidate.index(max(votesbycandidate))]))
+	text_file.close()
+
+candidate=[]
 with open(csvpath, newline='', encoding="utf8") as csvfile:
 
      #CSV reader specifies delimiter and variable that holds contents
@@ -27,26 +51,11 @@ with open(csvpath, newline='', encoding="utf8") as csvfile:
 	print(csvreader)
 
     #  Each row is read as a row
+	firstline = True
 	for row in csvreader:
-		title.append(row[1])
-		price.append(row[4])
-		sub.append(row[5])
-		rev.append(row[6])
-		a,b=row[9].split(" ")
-		leng.append(a)
-		percentile.append(int(row[6])/int(row[5]))
-	
-	zipped=zip(title, price, sub, rev, leng, percentile)
+		if firstline:    #skip first line
+			firstline = False
+			continue
+		candidate.append(row[2])
 
-output_path = os.path.join('output', 'nudemy.csv')
-print(output_path)
-# Open the file using "write" mode. Specify the variable to hold the contents
-with open(output_path, 'w', newline='') as csvfile:
-
-    # Initialize csv.writer
-    csvwriter = csv.writer(csvfile, delimiter=',')
-
-    # Write the first row (column headers)
-    for i in zipped:
-	    csvwriter.writerow(i)
-    
+getAnalysis(candidate)
