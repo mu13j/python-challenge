@@ -1,52 +1,32 @@
-import string
-# First we'll import the os module 
-# This will allow us to create file paths across operating systems
-import os
-csvpath = os.path.join('Resources', 'WebDevelopment.csv')
-
-
-# # Method 1: Plain Reading of CSVs
-#with open(csvpath, 'r') as file_handler:
-# lines = file_handler.read()
-# print(lines)
-# print(type(lines))
-
-# Method 2: Improved Reading using CSV module
-title=[]
-price=[]
-sub=[]
-rev=[]
-leng=[]
-percentile=[]
 import csv
-with open(csvpath, newline='', encoding="utf8") as csvfile:
+import re
+# It is a good idea to store the filename into a variable.
+# The variable can later become a function argument when the
+# code is converted to a function body.
+filename = 'paragraph_1.txt'
 
-     #CSV reader specifies delimiter and variable that holds contents
-	csvreader = csv.reader(csvfile, delimiter=',')
+# Using the newer with construct to close the file automatically.
+with open(filename) as f:
+	data = f.readlines()
+	reader = csv.reader(data, delimiter=' ')
+	wordcounter=0
+	sentencecounter=0
+	totalwordlength=0
+	for i in reader:
+		for j in i:
+			wordcounter+=1
+			if '.' in j:
+				sentencecounter+=1
+			totalwordlength=totalwordlength+len(j)
+	print("Paragraph Analysis")
+	print("-----------------")
+	print("Approximate Word Count: " + str(wordcounter))
+	print("Approximate Sentence Count: " + str(sentencecounter))
+	print("Average Letter Count: " + str(totalwordlength/wordcounter))
+	print("Average Sentence Length: " + str(wordcounter/sentencecounter))
 
-	print(csvreader)
+# You can later iterate through the list for other purpose, for
+# example to read them via the csv.reader.
 
-    #  Each row is read as a row
-	for row in csvreader:
-		title.append(row[1])
-		price.append(row[4])
-		sub.append(row[5])
-		rev.append(row[6])
-		a,b=row[9].split(" ")
-		leng.append(a)
-		percentile.append(int(row[6])/int(row[5]))
-	
-	zipped=zip(title, price, sub, rev, leng, percentile)
 
-output_path = os.path.join('output', 'nudemy.csv')
-print(output_path)
-# Open the file using "write" mode. Specify the variable to hold the contents
-with open(output_path, 'w', newline='') as csvfile:
 
-    # Initialize csv.writer
-    csvwriter = csv.writer(csvfile, delimiter=',')
-
-    # Write the first row (column headers)
-    for i in zipped:
-	    csvwriter.writerow(i)
-    

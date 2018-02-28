@@ -1,24 +1,14 @@
 import string
-# First we'll import the os module 
-# This will allow us to create file paths across operating systems
 import os
-csvpath = os.path.join('Resources', 'WebDevelopment.csv')
-
-
-# # Method 1: Plain Reading of CSVs
-#with open(csvpath, 'r') as file_handler:
-# lines = file_handler.read()
-# print(lines)
-# print(type(lines))
-
-# Method 2: Improved Reading using CSV module
-title=[]
-price=[]
-sub=[]
-rev=[]
-leng=[]
-percentile=[]
 import csv
+csvpath = os.path.join('employee_data1.csv')
+output_path = os.path.join('ConvertedData.csv')
+
+EMPID=[]
+Name=[]
+DOB=[]
+SSN=[]
+State=[]
 with open(csvpath, newline='', encoding="utf8") as csvfile:
 
      #CSV reader specifies delimiter and variable that holds contents
@@ -27,26 +17,99 @@ with open(csvpath, newline='', encoding="utf8") as csvfile:
 	print(csvreader)
 
     #  Each row is read as a row
+	firstline = True
 	for row in csvreader:
-		title.append(row[1])
-		price.append(row[4])
-		sub.append(row[5])
-		rev.append(row[6])
-		a,b=row[9].split(" ")
-		leng.append(a)
-		percentile.append(int(row[6])/int(row[5]))
+		EMPID.append(row[0])
+		Name.append(row[1])
+		DOB.append(row[2])
+		SSN.append(row[3])
+		State.append(row[4])
+#Changes Names
+firstname=['First Name']
+lastname=['Last Name']
+for i in Name[1:]:
+	a,b = i.split(" ")
+	firstname.append(a)
+	lastname.append(b)
 	
-	zipped=zip(title, price, sub, rev, leng, percentile)
+#Changes Date of Birth
+FixedDOB=['DOB']
+for i in DOB[1:]:
+	a=(i[5:7]+"/"+i[8:]+"/"+i[0:4])
+	FixedDOB.append(a)
 
-output_path = os.path.join('output', 'nudemy.csv')
-print(output_path)
-# Open the file using "write" mode. Specify the variable to hold the contents
+#Changes SSN
+FixedSSN=['SSN']
+for i in SSN[1:]:
+	a="***-**-"
+	a=a+(i[-4:])
+	FixedSSN.append(a)
+
+#Changes State
+FixedState=['State']
+us_state_abbrev = {
+    'Alabama': 'AL',
+    'Alaska': 'AK',
+    'Arizona': 'AZ',
+    'Arkansas': 'AR',
+    'California': 'CA',
+    'Colorado': 'CO',
+    'Connecticut': 'CT',
+    'Delaware': 'DE',
+    'Florida': 'FL',
+    'Georgia': 'GA',
+    'Hawaii': 'HI',
+    'Idaho': 'ID',
+    'Illinois': 'IL',
+    'Indiana': 'IN',
+    'Iowa': 'IA',
+    'Kansas': 'KS',
+    'Kentucky': 'KY',
+    'Louisiana': 'LA',
+    'Maine': 'ME',
+    'Maryland': 'MD',
+    'Massachusetts': 'MA',
+    'Michigan': 'MI',
+    'Minnesota': 'MN',
+    'Mississippi': 'MS',
+    'Missouri': 'MO',
+    'Montana': 'MT',
+    'Nebraska': 'NE',
+    'Nevada': 'NV',
+    'New Hampshire': 'NH',
+    'New Jersey': 'NJ',
+    'New Mexico': 'NM',
+    'New York': 'NY',
+    'North Carolina': 'NC',
+    'North Dakota': 'ND',
+    'Ohio': 'OH',
+    'Oklahoma': 'OK',
+    'Oregon': 'OR',
+    'Pennsylvania': 'PA',
+    'Rhode Island': 'RI',
+    'South Carolina': 'SC',
+    'South Dakota': 'SD',
+    'Tennessee': 'TN',
+    'Texas': 'TX',
+    'Utah': 'UT',
+    'Vermont': 'VT',
+    'Virginia': 'VA',
+    'Washington': 'WA',
+    'West Virginia': 'WV',
+    'Wisconsin': 'WI',
+    'Wyoming': 'WY',
+}
+for i in State[1:]:
+	FixedState.append(us_state_abbrev[i])
+
+Zipped=zip(EMPID, firstname, lastname, FixedDOB, FixedSSN, FixedState)
+
+
+
 with open(output_path, 'w', newline='') as csvfile:
 
     # Initialize csv.writer
-    csvwriter = csv.writer(csvfile, delimiter=',')
-
-    # Write the first row (column headers)
-    for i in zipped:
-	    csvwriter.writerow(i)
-    
+	csvwriter = csv.writer(csvfile, delimiter=',')
+	# Write the first row (column headers)
+	for i in range(len(EMPID)):
+		csvwriter.writerow([EMPID[i],firstname[i],lastname[i],FixedDOB[i],FixedSSN[i],FixedState[i]])

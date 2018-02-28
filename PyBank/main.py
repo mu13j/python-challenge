@@ -44,14 +44,6 @@ def getAnalysis(months,revenue):
 
 
 
-
-# # Method 1: Plain Reading of CSVs
-#with open(csvpath, 'r') as file_handler:
-# lines = file_handler.read()
-# print(lines)
-# print(type(lines))
-
-# Method 2: Improved Reading using CSV module
 months=[]
 revenue=[]
 with open(csvpath, newline='', encoding="utf8") as csvfile:
